@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#faf7f2">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Foyer</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="greeting">
+      <p class="date" id="date"></p>
+      <h1>Bonjour&nbsp;👋</h1>
+    </header>
+
+    <section class="widgets">
+      <article class="card temp-card">
+        <div class="temp-main">
+          <span class="temp-value" id="temp">--</span>
+          <span class="temp-unit">°C</span>
+        </div>
+        <p class="temp-meta">
+          <span id="hum">--%</span> d'humidité<span class="badge" id="temp-source"></span>
+        </p>
+      </article>
+
+      <article class="card courses-card">
+        <h2>Liste de courses</h2>
+        <ul class="courses" id="courses"></ul>
+        <form class="row-form" id="course-form">
+          <input id="course-input" placeholder="Ajouter un article…" autocomplete="off">
+          <button type="submit" aria-label="Ajouter">+</button>
+        </form>
+      </article>
+    </section>
+
+    <section class="card chat-card">
+      <h2>Assistant</h2>
+      <div class="chat" id="chat"></div>
+      <form class="row-form" id="chat-form">
+        <input id="chat-input" placeholder="Pose une question…" autocomplete="off">
+        <button type="submit" aria-label="Envoyer">↑</button>
+      </form>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

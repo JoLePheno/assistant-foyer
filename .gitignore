@@ -1,0 +1,27 @@
+# Environnements virtuels Python
+.venv/
+venv/
+env/
+
+# Secrets / configuration locale
+.env
+.env.local
+*.local
+
+# Bytecode Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# Éditeurs / IDE
+.vscode/
+.idea/
+
