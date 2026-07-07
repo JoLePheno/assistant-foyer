@@ -7,12 +7,25 @@ $("#date").textContent = new Date().toLocaleDateString("fr-FR", {
 });
 
 // --- widgets (température + courses) ----------------------------------------
+function tempBadge(t) {
+  if (t.source === "demo") return "démo";
+  if (t.source === "stale") return "ancienne";
+  if (t.source === "shelly" && t.updated) {
+    const mins = Math.round((Date.now() - new Date(t.updated).getTime()) / 60000);
+    if (mins < 1) return "à l'instant";
+    if (mins < 60) return `il y a ${mins} min`;
+    return `il y a ${Math.round(mins / 60)} h`;
+  }
+  return "";
+}
+
 async function loadWidgets() {
   try {
     const data = await (await fetch("/api/widgets")).json();
-    $("#temp").textContent = data.temperature.temperature;
-    $("#hum").textContent = data.temperature.humidity + "%";
-    $("#temp-source").textContent = data.temperature.source === "demo" ? "démo" : "";
+    const t = data.temperature;
+    $("#temp").textContent = t.temperature;
+    $("#hum").textContent = (t.humidity ?? "--") + "%";
+    $("#temp-source").textContent = tempBadge(t);
     renderCourses(data.courses);
   } catch {
     $("#temp").textContent = "--";
