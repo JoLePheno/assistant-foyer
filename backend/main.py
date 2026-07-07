@@ -158,16 +158,46 @@ def _to_float(v):
         return None
 
 
+def fetch_from_shelly(ip):
+    """Interroge un Shelly (Gen1 ou Gen2) pour lire (temperature, humidity).
+
+    Utile juste après qu'il nous a "pingés" : à cet instant il est réveillé,
+    donc joignable même s'il est sur batterie. Renvoie (temp, hum) ou None.
+    """
+    if not ip:
+        return None
+    # Gen2 / Plus
+    try:
+        s = requests.get(f"http://{ip}/rpc/Shelly.GetStatus", timeout=3).json()
+        t = s.get("temperature:0", {}).get("tC")
+        h = s.get("humidity:0", {}).get("rh")
+        if t is not None:
+            return (t, h)
+    except Exception:
+        pass
+    # Gen1 (H&T)
+    try:
+        s = requests.get(f"http://{ip}/status", timeout=3).json()
+        t = s.get("tmp", {}).get("tC")
+        h = s.get("hum", {}).get("value")
+        if t is not None:
+            return (t, h)
+    except Exception:
+        pass
+    return None
+
+
 @app.api_route("/api/report", methods=["GET", "POST"])
 async def report(request: Request):
     """Point d'entrée pour les mesures **poussées** par le Shelly H&T.
 
-    Configure côté Shelly (app Shelly → Settings → Actions / "Report sensor
-    values") une URL du type :
+    Configure côté Shelly (app Shelly → Settings → Actions / Webhook) une URL :
         http://<ip-du-pi>:8000/api/report
-    Le Shelly H&T (Gen1) y ajoute automatiquement `?temp=..&hum=..`.
-    Pour un Shelly Plus H&T (Gen2), crée un webhook pointant vers la même URL
-    avec les champs temperature/humidity.
+    Deux cas gérés :
+      • l'URL contient déjà ?temp=..&hum=.. (Shelly Gen1, ou webhook avec
+        placeholders) → on lit directement ces valeurs ;
+      • l'URL est appelée sans valeur → le Shelly vient de se réveiller, on
+        l'interroge en retour (via son IP) pour lire sa mesure.
     """
     params = dict(request.query_params)
     if request.method == "POST":
@@ -181,6 +211,12 @@ async def report(request: Request):
     temperature = _to_float(params.get("temp") or params.get("temperature"))
     humidity = _to_float(params.get("hum") or params.get("humidity"))
     battery = _to_float(params.get("bat") or params.get("battery"))
+
+    # Aucune valeur fournie : on rappelle le Shelly pendant qu'il est réveillé.
+    if temperature is None and humidity is None:
+        fetched = fetch_from_shelly(request.client.host if request.client else None)
+        if fetched:
+            temperature, humidity = fetched
 
     if temperature is None and humidity is None:
         return {"ok": False, "error": "aucune valeur temp/hum reçue"}
