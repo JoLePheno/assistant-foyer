@@ -64,7 +64,8 @@
 
   <!-- Homme (cheveux courts + épaules) -->
   <g>
-    <path d="M262 424 v-24 a24 22 0 0 1 48 0 v24 Z" fill="#B5754C"/>  <!-- épaules/chemise -->
+    <rect x="280" y="360" width="12" height="34" rx="6" fill="#F2C9A0"/>    <!-- cou -->
+    <path d="M256 424 L272 392 Q286 388 300 392 L316 424 Z" fill="#B5754C"/> <!-- épaules/chemise -->
     <circle cx="286" cy="350" r="16" fill="#F2C9A0"/>            <!-- visage -->
     <path d="M270 347 q4 -23 16 -23 q12 0 16 23 q-6 -8 -16 -8 q-10 0 -16 8 Z" fill="#4B3A2E"/> <!-- cheveux courts -->
     <circle cx="280" cy="351" r="2.3" fill="#3B3A36"/>          <!-- oeil g -->
@@ -78,5 +79,6 @@
   <!-- cadre de la fenêtre -->
   <rect x="180" y="310" width="152" height="120" rx="12" fill="none" stroke="#B98A3C" stroke-width="6" opacity="0.7"/>
 </svg>
+
 
 
