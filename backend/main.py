@@ -13,6 +13,7 @@ distante. Pour passer un jour en local, il suffira de changer l'URL ci-dessous.
 import os
 import re
 import sqlite3
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -34,6 +35,11 @@ MISTRAL_KEY = os.environ.get("MISTRAL_API_KEY", "")
 MISTRAL_MODEL = os.environ.get("MISTRAL_MODEL", "mistral-small-latest")
 MISTRAL_URL = "https://api.mistral.ai/v1/chat/completions"
 SHELLY_IP = os.environ.get("SHELLY_IP", "")
+
+# Température extérieure via Open-Meteo (gratuit, sans clé). Par défaut : Paris 16e.
+OUTDOOR_LAT = os.environ.get("OUTDOOR_LAT", "48.8637")
+OUTDOOR_LON = os.environ.get("OUTDOOR_LON", "2.2769")
+OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast"
 
 app = FastAPI(title="Assistant Foyer")
 
@@ -62,9 +68,14 @@ def init_db():
                    temperature REAL,
                    humidity    REAL,
                    battery     INTEGER,
+                   outdoor     REAL,
                    ts          TEXT NOT NULL
                )"""
         )
+        # Migration : ajoute la colonne "outdoor" si la base existe déjà sans.
+        cols = [r[1] for r in conn.execute("PRAGMA table_info(readings)").fetchall()]
+        if "outdoor" not in cols:
+            conn.execute("ALTER TABLE readings ADD COLUMN outdoor REAL")
 
 
 init_db()
@@ -74,6 +85,37 @@ init_db()
 READING_MAX_AGE = 3 * 3600  # 3 heures
 
 
+# Cache de la température extérieure pour ne pas appeler Open-Meteo trop souvent.
+_outdoor_cache = {"ts": 0.0, "value": None}
+
+
+def fetch_outdoor_temperature():
+    """Température extérieure actuelle (Paris 16e par défaut) via Open-Meteo.
+
+    Gratuit et sans clé API. Résultat mis en cache 5 min. Renvoie un float en
+    °C, ou la dernière valeur connue (voire None) en cas d'échec réseau.
+    """
+    now = time.time()
+    if _outdoor_cache["value"] is not None and now - _outdoor_cache["ts"] < 300:
+        return _outdoor_cache["value"]
+    try:
+        r = requests.get(
+            OPEN_METEO_URL,
+            params={
+                "latitude": OUTDOOR_LAT,
+                "longitude": OUTDOOR_LON,
+                "current": "temperature_2m",
+            },
+            timeout=5,
+        )
+        r.raise_for_status()
+        value = float(r.json()["current"]["temperature_2m"])
+        _outdoor_cache.update(ts=now, value=value)
+        return value
+    except Exception:
+        return _outdoor_cache["value"]
+
+
 def save_reading(temperature, humidity, battery=None):
     now = datetime.now(timezone.utc)
     with db() as conn:
@@ -81,22 +123,27 @@ def save_reading(temperature, humidity, battery=None):
         # température seule, l'autre avec température + humidité (via le rappel).
         # On fusionne ces doublons dans une même ligne pour un historique propre.
         row = conn.execute(
-            "SELECT id, ts, temperature, humidity FROM readings ORDER BY id DESC LIMIT 1"
+            "SELECT id, ts, temperature, humidity, outdoor FROM readings ORDER BY id DESC LIMIT 1"
         ).fetchone()
         if row:
             age = (now - datetime.fromisoformat(row["ts"])).total_seconds()
             if age < 90:
                 new_t = temperature if temperature is not None else row["temperature"]
                 new_h = humidity if humidity is not None else row["humidity"]
+                # On réutilise la température extérieure déjà récupérée pour ce réveil.
+                outdoor = row["outdoor"] if row["outdoor"] is not None else fetch_outdoor_temperature()
                 conn.execute(
                     "UPDATE readings SET temperature = ?, humidity = ?, "
-                    "battery = COALESCE(?, battery), ts = ? WHERE id = ?",
-                    (new_t, new_h, battery, now.isoformat(), row["id"]),
+                    "battery = COALESCE(?, battery), outdoor = ?, ts = ? WHERE id = ?",
+                    (new_t, new_h, battery, outdoor, now.isoformat(), row["id"]),
                 )
                 return
+        # Nouveau réveil → on récupère la température extérieure du moment.
+        outdoor = fetch_outdoor_temperature()
         conn.execute(
-            "INSERT INTO readings (temperature, humidity, battery, ts) VALUES (?, ?, ?, ?)",
-            (temperature, humidity, battery, now.isoformat()),
+            "INSERT INTO readings (temperature, humidity, battery, outdoor, ts) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (temperature, humidity, battery, outdoor, now.isoformat()),
         )
 
 
@@ -178,14 +225,19 @@ def history(hours: int = 24):
     since = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
     with db() as conn:
         rows = conn.execute(
-            "SELECT ts, temperature, humidity FROM readings "
+            "SELECT ts, temperature, humidity, outdoor FROM readings "
             "WHERE ts >= ? AND temperature IS NOT NULL ORDER BY ts",
             (since,),
         ).fetchall()
     return {
         "hours": hours,
         "points": [
-            {"ts": r["ts"], "temperature": r["temperature"], "humidity": r["humidity"]}
+            {
+                "ts": r["ts"],
+                "temperature": r["temperature"],
+                "humidity": r["humidity"],
+                "outdoor": r["outdoor"],
+            }
             for r in rows
         ],
     }

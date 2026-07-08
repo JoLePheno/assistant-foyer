@@ -4,6 +4,7 @@
 const COLD = "#4a90d9";
 const OK = "#5aa469";
 const HOT = "#e6b73c";
+const OUTDOOR = "#b0a89c"; // gris-taupe pour la courbe extérieure
 
 function colorFor(t) {
   if (t == null) return OK;
@@ -54,6 +55,8 @@ async function load(hours) {
   const labels = points.map((p) => formatLabel(p.ts, hours));
   const temps = points.map((p) => p.temperature);
   const hums = points.map((p) => p.humidity);
+  const outdoor = points.map((p) => p.outdoor);
+  const hasOutdoor = outdoor.some((v) => v != null);
 
   if (chart) chart.destroy();
   chart = new Chart(document.getElementById("chart"), {
@@ -62,7 +65,7 @@ async function load(hours) {
       labels,
       datasets: [
         {
-          label: "Température",
+          label: "Intérieur",
           data: temps,
           tension: 0.3,
           borderWidth: 3,
@@ -75,6 +78,21 @@ async function load(hours) {
             borderColor: (ctx) => colorFor(ctx.p0.parsed.y),
           },
           fill: false,
+          order: 1,
+        },
+        {
+          label: "Extérieur (Paris 16e)",
+          data: outdoor,
+          tension: 0.3,
+          borderWidth: 2,
+          borderColor: OUTDOOR,
+          backgroundColor: OUTDOOR,
+          pointRadius: 0,
+          borderDash: [5, 4],
+          spanGaps: true,
+          hidden: !hasOutdoor,
+          fill: false,
+          order: 2,
         },
       ],
     },
@@ -87,8 +105,11 @@ async function load(hours) {
         tooltip: {
           callbacks: {
             label: (c) => {
+              if (c.dataset.label === "Extérieur (Paris 16e)") {
+                return c.parsed.y == null ? null : ` Extérieur : ${c.parsed.y} °C`;
+              }
               const h = hums[c.dataIndex];
-              return ` ${c.parsed.y} °C` + (h != null ? ` · ${Math.round(h)} % HR` : "");
+              return ` Intérieur : ${c.parsed.y} °C` + (h != null ? ` · ${Math.round(h)} % HR` : "");
             },
           },
         },
@@ -113,4 +134,6 @@ document.querySelectorAll(".ranges button").forEach((b) => {
 });
 
 load(24);
+
+
 
