@@ -13,7 +13,7 @@ distante. Pour passer un jour en local, il suffira de changer l'URL ci-dessous.
 import os
 import re
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import requests
@@ -150,6 +150,27 @@ def widgets():
     with db() as conn:
         rows = conn.execute("SELECT id, item, done FROM courses ORDER BY id").fetchall()
     return {"temperature": read_temperature(), "courses": [dict(r) for r in rows]}
+
+
+@app.get("/api/history")
+def history(hours: int = 24):
+    """Historique des relevés de température/humidité sur les N dernières heures
+    (par défaut 24 h). Alimente le graphique de la page /history."""
+    hours = max(1, min(hours, 24 * 30))  # borne : 1 h à 30 jours
+    since = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
+    with db() as conn:
+        rows = conn.execute(
+            "SELECT ts, temperature, humidity FROM readings "
+            "WHERE ts >= ? AND temperature IS NOT NULL ORDER BY ts",
+            (since,),
+        ).fetchall()
+    return {
+        "hours": hours,
+        "points": [
+            {"ts": r["ts"], "temperature": r["temperature"], "humidity": r["humidity"]}
+            for r in rows
+        ],
+    }
 
 
 def _to_float(v):
@@ -301,6 +322,12 @@ def chat(body: ChatIn):
 @app.get("/")
 def index():
     return FileResponse(WEB_DIR / "index.html")
+
+
+@app.get("/history")
+@app.get("/historique")
+def history_page():
+    return FileResponse(WEB_DIR / "history.html")
 
 
 app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#faf7f2">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Température · historique</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/chart.umd.min.js"></script>
+</head>
+<body>
+  <main class="app">
+    <div class="page-head">
+      <a class="back-link" href="/" aria-label="Retour">←</a>
+      <h1>Évolution de la température</h1>
+    </div>
+
+    <section class="card chart-card">
+      <div class="ranges">
+        <button data-h="6">6 h</button>
+        <button data-h="24" class="active">24 h</button>
+        <button data-h="168">7 j</button>
+        <button data-h="720">30 j</button>
+      </div>
+
+      <div class="chart-wrap" id="chart-wrap">
+        <canvas id="chart"></canvas>
+      </div>
+      <p class="chart-empty" id="empty" style="display:none">
+        Pas encore assez de données. Les mesures s'accumulent au fil des relevés du capteur.
+      </p>
+
+      <div class="legend">
+        <span><i class="c-cold"></i> &lt; 21 °C</span>
+        <span><i class="c-ok"></i> 21–26 °C</span>
+        <span><i class="c-hot"></i> &gt; 26 °C</span>
+      </div>
+    </section>
+  </main>
+  <script src="/static/history.js"></script>
+</body>
+</html>
+

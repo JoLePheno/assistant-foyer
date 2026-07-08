@@ -48,16 +48,44 @@ body {
 
 /* Température */
 .temp-card { background: linear-gradient(140deg, #8fae99, #7c9885); color: #fff; }
+a.temp-card { display: block; text-decoration: none; position: relative; transition: transform 0.12s; }
+a.temp-card:active { transform: scale(0.985); }
 .temp-main { display: flex; align-items: baseline; gap: 4px; }
 .temp-value { font-size: 3.4rem; font-weight: 700; line-height: 1; }
 .temp-unit { font-size: 1.4rem; font-weight: 600; opacity: 0.85; }
 .temp-meta { margin-top: 8px; opacity: 0.95; font-size: 0.95rem; }
+.temp-cta { display: inline-block; margin-top: 14px; font-size: 0.85rem; font-weight: 600; opacity: 0.9; }
 .badge {
   display: inline-block; margin-left: 8px; padding: 2px 9px; border-radius: 999px;
   background: rgba(255, 255, 255, 0.25); font-size: 0.72rem; font-weight: 600;
   vertical-align: middle;
 }
 .badge:empty { display: none; }
+
+/* Page historique / graphique */
+.page-head { display: flex; align-items: center; gap: 12px; padding: 6px 6px 0; }
+.back-link {
+  text-decoration: none; color: var(--ink); font-size: 1.4rem; line-height: 1;
+  width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+  background: var(--card); border-radius: 14px; box-shadow: var(--shadow); flex: none;
+}
+.page-head h1 { font-size: 1.4rem; font-weight: 650; }
+.chart-card { padding: 18px 14px; }
+.chart-wrap { position: relative; height: 300px; }
+.ranges { display: flex; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+.ranges button {
+  border: 1px solid var(--line); background: #fbf9f6; color: var(--muted);
+  border-radius: 999px; padding: 7px 15px; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+  transition: all 0.15s;
+}
+.ranges button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.legend { display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap; font-size: 0.85rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+.legend .c-cold { background: #4a90d9; }
+.legend .c-ok { background: #5aa469; }
+.legend .c-hot { background: #e6b73c; }
+.chart-empty { color: var(--muted); font-style: italic; text-align: center; padding: 40px 0; }
 
 /* Liste de courses */
 .courses { list-style: none; }
