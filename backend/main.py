@@ -75,10 +75,28 @@ READING_MAX_AGE = 3 * 3600  # 3 heures
 
 
 def save_reading(temperature, humidity, battery=None):
+    now = datetime.now(timezone.utc)
     with db() as conn:
+        # Le Shelly envoie 2 requêtes par réveil (à ~1 s d'écart) : l'une avec la
+        # température seule, l'autre avec température + humidité (via le rappel).
+        # On fusionne ces doublons dans une même ligne pour un historique propre.
+        row = conn.execute(
+            "SELECT id, ts, temperature, humidity FROM readings ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+        if row:
+            age = (now - datetime.fromisoformat(row["ts"])).total_seconds()
+            if age < 90:
+                new_t = temperature if temperature is not None else row["temperature"]
+                new_h = humidity if humidity is not None else row["humidity"]
+                conn.execute(
+                    "UPDATE readings SET temperature = ?, humidity = ?, "
+                    "battery = COALESCE(?, battery), ts = ? WHERE id = ?",
+                    (new_t, new_h, battery, now.isoformat(), row["id"]),
+                )
+                return
         conn.execute(
             "INSERT INTO readings (temperature, humidity, battery, ts) VALUES (?, ?, ?, ?)",
-            (temperature, humidity, battery, datetime.now(timezone.utc).isoformat()),
+            (temperature, humidity, battery, now.isoformat()),
         )
 
 
