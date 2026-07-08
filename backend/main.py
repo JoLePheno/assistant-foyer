@@ -11,6 +11,7 @@ distante. Pour passer un jour en local, il suffira de changer l'URL ci-dessous.
 """
 
 import os
+import re
 import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
@@ -152,10 +153,18 @@ def widgets():
 
 
 def _to_float(v):
+    """Convertit une valeur en float de façon tolérante.
+
+    Le webhook Shelly peut envoyer la valeur entourée d'accolades (ex. "{26.3}")
+    ou avec une unité : on extrait simplement le premier nombre présent.
+    """
+    if v is None:
+        return None
     try:
         return float(v)
     except (TypeError, ValueError):
-        return None
+        m = re.search(r"-?\d+(?:\.\d+)?", str(v))
+        return float(m.group()) if m else None
 
 
 def fetch_from_shelly(ip):
