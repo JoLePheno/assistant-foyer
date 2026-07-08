@@ -51,34 +51,36 @@
   <!-- Fenêtre avec le couple -->
   <rect x="180" y="310" width="152" height="120" rx="12" fill="url(#window)"/>
 
-  <!-- Femme (cheveux longs + robe) -->
+  <!-- Femme (peau claire, cheveux longs, robe) -->
   <g>
-    <path d="M228 368 l22 56 h-44 Z" fill="#7C9885"/>            <!-- robe -->
-    <path d="M212 350 q0 -26 16 -26 q16 0 16 26 v30 q0 8 -6 8 h-20 q-6 0 -6 -8 Z" fill="#5B4636"/> <!-- cheveux longs -->
-    <circle cx="228" cy="350" r="16" fill="#F2C9A0"/>            <!-- visage -->
-    <path d="M214 345 q6 -19 14 -19 q8 0 14 19 q-14 -7 -28 0 Z" fill="#5B4636"/> <!-- frange -->
-    <circle cx="222" cy="351" r="2.3" fill="#3B3A36"/>          <!-- oeil g -->
-    <circle cx="234" cy="351" r="2.3" fill="#3B3A36"/>          <!-- oeil d -->
-    <path d="M221 357 q7 6 14 0" stroke="#3B3A36" stroke-width="2" fill="none" stroke-linecap="round"/> <!-- sourire -->
+    <ellipse cx="224" cy="352" rx="22" ry="30" fill="#6E4A32"/>            <!-- cheveux longs (arrière) -->
+    <path d="M224 372 L248 424 H200 Z" fill="#E39AA0"/>                     <!-- robe -->
+    <rect x="217" y="360" width="14" height="18" fill="#F5D3B3"/>           <!-- cou -->
+    <circle cx="224" cy="348" r="17" fill="#F5D3B3"/>                       <!-- visage -->
+    <path d="M208 344 q16 -18 32 0 q-16 -8 -32 0 Z" fill="#6E4A32"/>        <!-- frange -->
+    <circle cx="218" cy="349" r="2.4" fill="#3B3A36"/>                      <!-- oeil g -->
+    <circle cx="230" cy="349" r="2.4" fill="#3B3A36"/>                      <!-- oeil d -->
+    <path d="M218 356 q6 5 12 0" stroke="#3B3A36" stroke-width="2" fill="none" stroke-linecap="round"/> <!-- sourire -->
   </g>
 
-  <!-- Homme (cheveux courts + épaules) -->
+  <!-- Homme (peau claire, cheveux courts, chemise, menton dégagé) -->
   <g>
-    <rect x="280" y="360" width="12" height="34" rx="6" fill="#F2C9A0"/>    <!-- cou -->
-    <path d="M256 424 L272 392 Q286 388 300 392 L316 424 Z" fill="#B5754C"/> <!-- épaules/chemise -->
-    <circle cx="286" cy="350" r="16" fill="#F2C9A0"/>            <!-- visage -->
-    <path d="M270 347 q4 -23 16 -23 q12 0 16 23 q-6 -8 -16 -8 q-10 0 -16 8 Z" fill="#4B3A2E"/> <!-- cheveux courts -->
-    <circle cx="280" cy="351" r="2.3" fill="#3B3A36"/>          <!-- oeil g -->
-    <circle cx="292" cy="351" r="2.3" fill="#3B3A36"/>          <!-- oeil d -->
-    <path d="M279 357 q7 6 14 0" stroke="#3B3A36" stroke-width="2" fill="none" stroke-linecap="round"/> <!-- sourire -->
+    <path d="M258 424 L274 396 Q288 392 302 396 L318 424 Z" fill="#6C8CB5"/> <!-- chemise -->
+    <rect x="281" y="360" width="14" height="34" fill="#F5D3B3"/>           <!-- cou -->
+    <circle cx="288" cy="348" r="17" fill="#F5D3B3"/>                       <!-- visage -->
+    <path d="M271 346 q0 -21 17 -21 q17 0 17 21 q-8 -9 -17 -9 q-9 0 -17 9 Z" fill="#5A3E29"/> <!-- cheveux courts -->
+    <circle cx="282" cy="349" r="2.4" fill="#3B3A36"/>                      <!-- oeil g -->
+    <circle cx="294" cy="349" r="2.4" fill="#3B3A36"/>                      <!-- oeil d -->
+    <path d="M282 356 q6 5 12 0" stroke="#3B3A36" stroke-width="2" fill="none" stroke-linecap="round"/> <!-- sourire -->
   </g>
 
   <!-- petit coeur entre eux -->
-  <path d="M257 336 a4 4 0 0 1 7 2 a4 4 0 0 1 7 -2 q0 5 -7 9 q-7 -4 -7 -9 Z" fill="#E06A5B"/>
+  <path d="M256 349 q-9 -8 -9 -15 a5 5 0 0 1 9 -3 a5 5 0 0 1 9 3 q0 7 -9 15 Z" fill="#E06A5B"/>
 
   <!-- cadre de la fenêtre -->
   <rect x="180" y="310" width="152" height="120" rx="12" fill="none" stroke="#B98A3C" stroke-width="6" opacity="0.7"/>
 </svg>
+
 
 
 
