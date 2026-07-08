@@ -1,0 +1,67 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Assistant Foyer – maison en pleine canicule">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE7A6"/>
+      <stop offset="1" stop-color="#FFB067"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFF3C4"/>
+      <stop offset="0.55" stop-color="#FFC24B"/>
+      <stop offset="1" stop-color="#FF8A3D"/>
+    </radialGradient>
+    <linearGradient id="roof" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8FAE99"/>
+      <stop offset="1" stop-color="#7C9885"/>
+    </linearGradient>
+    <linearGradient id="window" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFF6DA"/>
+      <stop offset="1" stop-color="#FFD98A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fond arrondi (squircle) -->
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#bg)"/>
+
+  <!-- Soleil de canicule + rayons -->
+  <g stroke="#FFAE4D" stroke-width="14" stroke-linecap="round" opacity="0.9">
+    <line x1="386" y1="70" x2="386" y2="30"/>
+    <line x1="452" y1="136" x2="492" y2="136"/>
+    <line x1="437" y1="87" x2="466" y2="58"/>
+    <line x1="437" y1="185" x2="466" y2="214"/>
+    <line x1="335" y1="87" x2="306" y2="58"/>
+  </g>
+  <circle cx="386" cy="136" r="60" fill="url(#sun)"/>
+
+  <!-- Ondes de chaleur -->
+  <g stroke="#FF8A3D" stroke-width="9" stroke-linecap="round" fill="none" opacity="0.55">
+    <path d="M96 150 q18 -18 36 0 t36 0 t36 0"/>
+    <path d="M92 196 q18 -18 36 0 t36 0"/>
+  </g>
+
+  <!-- Ombre douce sous la maison -->
+  <ellipse cx="256" cy="432" rx="150" ry="20" fill="#E8863F" opacity="0.35"/>
+
+  <!-- Toit -->
+  <path d="M256 176 L410 300 L102 300 Z" fill="url(#roof)"/>
+  <path d="M256 176 L410 300 L102 300 Z" fill="#000" opacity="0.06"/>
+
+  <!-- Corps de la maison -->
+  <rect x="140" y="290" width="232" height="150" rx="16" fill="#FFFDF8"/>
+
+  <!-- Fenêtre avec le couple -->
+  <rect x="196" y="316" width="120" height="104" rx="12" fill="url(#window)"/>
+  <g fill="#5B534A">
+    <!-- personne 1 -->
+    <circle cx="236" cy="356" r="15"/>
+    <path d="M214 420 v-16 a22 22 0 0 1 44 0 v16 Z"/>
+    <!-- personne 2 -->
+    <circle cx="278" cy="356" r="15"/>
+    <path d="M256 420 v-16 a22 22 0 0 1 44 0 v16 Z"/>
+  </g>
+  <!-- croisillon de la fenêtre -->
+  <g stroke="#B98A3C" stroke-width="5" opacity="0.7">
+    <line x1="256" y1="316" x2="256" y2="420"/>
+  </g>
+  <rect x="196" y="316" width="120" height="104" rx="12" fill="none" stroke="#B98A3C" stroke-width="6" opacity="0.7"/>
+</svg>
+

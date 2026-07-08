@@ -29,6 +29,10 @@ body {
 
 /* En-tête */
 .greeting { padding: 6px 6px 0; }
+.greeting .logo {
+  display: block; width: 52px; height: 52px; margin-bottom: 10px;
+  border-radius: 15px; box-shadow: var(--shadow);
+}
 .greeting .date { color: var(--muted); font-size: 0.9rem; text-transform: capitalize; }
 .greeting h1 { font-size: 1.9rem; font-weight: 650; margin-top: 2px; }
 
