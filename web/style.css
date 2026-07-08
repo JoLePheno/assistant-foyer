@@ -86,6 +86,7 @@ a.temp-card:active { transform: scale(0.985); }
 .legend .c-ok { background: #5aa469; }
 .legend .c-hot { background: #e6b73c; }
 .legend .c-out { background: #b0a89c; }
+.legend .c-in { background: linear-gradient(90deg, #4a90d9, #5aa469, #e6b73c); }
 .chart-empty { color: var(--muted); font-style: italic; text-align: center; padding: 40px 0; }
 
 /* Liste de courses */
