@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#faf7f2">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>To-do list</title>
+  <link rel="icon" href="/static/logo.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/static/logo.svg">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="app">
+    <div class="page-head">
+      <a class="back-link" href="/" aria-label="Retour">←</a>
+      <h1>To-do list</h1>
+    </div>
+
+    <section class="card todo-detail space-marion" id="card-marion">
+      <h2>Marion</h2>
+      <ul class="todo-items" id="list-marion"></ul>
+      <form class="row-form" data-owner="marion">
+        <input placeholder="Ajouter une tâche…" autocomplete="off">
+        <button type="submit" aria-label="Ajouter">+</button>
+      </form>
+    </section>
+
+    <section class="card todo-detail space-jonathan" id="card-jonathan">
+      <h2>Jonathan</h2>
+      <ul class="todo-items" id="list-jonathan"></ul>
+      <form class="row-form" data-owner="jonathan">
+        <input placeholder="Ajouter une tâche…" autocomplete="off">
+        <button type="submit" aria-label="Ajouter">+</button>
+      </form>
+    </section>
+  </main>
+  <script src="/static/todo.js"></script>
+</body>
+</html>
+

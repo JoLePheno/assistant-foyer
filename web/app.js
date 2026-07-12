@@ -122,3 +122,17 @@ $("#chat-form").onsubmit = async (e) => {
 
 // --- démarrage --------------------------------------------------------------
 loadWidgets();
+loadTodoCounts();
+
+// --- to-do (aperçu des compteurs sur l'accueil) -----------------------------
+async function loadTodoCounts() {
+  try {
+    const data = await (await fetch("/api/todos")).json();
+    const cm = document.querySelector("#count-marion");
+    const cj = document.querySelector("#count-jonathan");
+    if (cm) cm.textContent = data.counts.marion ?? 0;
+    if (cj) cj.textContent = data.counts.jonathan ?? 0;
+  } catch {
+    /* pas grave : la carte reste à 0 */
+  }
+}

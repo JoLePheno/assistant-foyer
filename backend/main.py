@@ -76,6 +76,15 @@ def init_db():
         cols = [r[1] for r in conn.execute("PRAGMA table_info(readings)").fetchall()]
         if "outdoor" not in cols:
             conn.execute("ALTER TABLE readings ADD COLUMN outdoor REAL")
+        # To-do list, séparée par personne (owner : "marion" ou "jonathan").
+        conn.execute(
+            """CREATE TABLE IF NOT EXISTS todos (
+                   id    INTEGER PRIMARY KEY AUTOINCREMENT,
+                   owner TEXT    NOT NULL,
+                   item  TEXT    NOT NULL,
+                   done  INTEGER NOT NULL DEFAULT 0
+               )"""
+        )
 
 
 init_db()
@@ -351,6 +360,57 @@ def delete_course(course_id: int):
     return {"ok": True}
 
 
+# --- API : to-do list (par personne) ---------------------------------------
+TODO_OWNERS = ("marion", "jonathan")
+
+
+class TodoIn(BaseModel):
+    owner: str
+    item: str
+
+
+@app.get("/api/todos")
+def list_todos():
+    """Renvoie les tâches groupées par personne + le nombre de tâches à faire."""
+    with db() as conn:
+        rows = conn.execute(
+            "SELECT id, owner, item, done FROM todos ORDER BY done, id"
+        ).fetchall()
+    result = {owner: [] for owner in TODO_OWNERS}
+    for r in rows:
+        if r["owner"] in result:
+            result[r["owner"]].append({"id": r["id"], "item": r["item"], "done": r["done"]})
+    counts = {owner: sum(1 for t in items if not t["done"]) for owner, items in result.items()}
+    return {"todos": result, "counts": counts}
+
+
+@app.post("/api/todos")
+def add_todo(t: TodoIn):
+    owner = t.owner.strip().lower()
+    item = t.item.strip()
+    if owner not in TODO_OWNERS or not item:
+        return {"ok": False, "error": "owner ou item invalide"}
+    with db() as conn:
+        cur = conn.execute(
+            "INSERT INTO todos (owner, item) VALUES (?, ?)", (owner, item)
+        )
+        return {"id": cur.lastrowid, "owner": owner, "item": item, "done": 0}
+
+
+@app.post("/api/todos/{todo_id}/toggle")
+def toggle_todo(todo_id: int):
+    with db() as conn:
+        conn.execute("UPDATE todos SET done = 1 - done WHERE id = ?", (todo_id,))
+    return {"ok": True}
+
+
+@app.delete("/api/todos/{todo_id}")
+def delete_todo(todo_id: int):
+    with db() as conn:
+        conn.execute("DELETE FROM todos WHERE id = ?", (todo_id,))
+    return {"ok": True}
+
+
 # --- API : assistant (Mistral) ---------------------------------------------
 class ChatIn(BaseModel):
     messages: list  # [{"role": "user"|"assistant", "content": "…"}]
@@ -398,6 +458,12 @@ def index():
 @app.get("/historique")
 def history_page():
     return FileResponse(WEB_DIR / "history.html")
+
+
+@app.get("/todo")
+@app.get("/todos")
+def todo_page():
+    return FileResponse(WEB_DIR / "todo.html")
 
 
 app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
